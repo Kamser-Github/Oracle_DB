@@ -96,7 +96,8 @@ AND PHONE IS NULL;
 ```
 <br>
 
-## `문자열 데이터 안에서 특정 문자 위치를 찾는 함수`   
+## `문자열 데이터 안에서 특정 문자 위치를 찾는 함수`  
+> ### INSTR() 
 > 찾으려는 문자가 문자열 데이터에 없으면 0을 반환    
 ```
 INSTR([대상 문자열 데이터(필수)],
@@ -169,4 +170,131 @@ WHERE INSTR(FIRST_NAME,'S')>0;
 SELECT *
 FROM EMPLOYEES
 WHERE FIRST_NAME LIKE '%S%';
+```
+<br>
+
+## `특정 문자를 다른 문자로 바꾸는 함수` 
+> ### REPLACE()   
+> 대체할 문자를 입력하지 않으면 지정한 문자는 데이터에서 삭제된다.   
+```
+REPLACE([문자열 데이터,열 이름(필수)],
+        [찾는문자(필수),
+        [대체할 문자(선택)]]);
+```
+ 
+ ```
+ SELECT 
+'010-1234-5678' AS REPLACE_BEFORE,
+REPLACE('010-1234-5678','-',' ') AS REPLACE_1,
+REPLACE('010-1234-5678','-') AS REPLACE_2
+FROM DUAL;
+
+//결과값
+010-1234-5678 / 010 1234 5678 / 01012345678
+```
+
+__카드번호,주민번호,날짜나 시간을 나타내는 특정 문자가__  
+__중간에 끼어있는 데이터에서 다른 문자로 바꿀때 종종사용된다__
+
+<br>
+
+## `데이터의 빈 공간을 특정문자로 채우는 함수`   
+> ### LPAD() 
+> LPAD => 남은 빈 공간을 왼쪽에 채우고   
+> RPAD => 남은 빈 공간을 오른쪽에 채운다   
+```
+LPAD([문자열 데이터,열 이름(필수)],
+     [데이터의 자릿수(필수)],
+     [빈 공간에 채울 문자(선택)])
+```
+```
+SELECT LPAD('HELLO',5) FROM DUAL; //HELLO
+SELECT LPAD('HELLO',5,'0') FROM DUAL; //HELLO
+SELECT LPAD('HELLO',10,'0') FROM DUAL; //00000HELLO
+SELECT RPAD('HELLO',10,'0') FROM DUAL; //HELLO00000
+너비를 고정하고 싶을때 이건 바이트 단위 2배를 곱해야한다.
+SELECT LPAD(first_name,10,' ') FROM employees; /
+```
+```
+개인정보,특정 데이터를 일부분만 노출시켜야 할때
+SELECT 
+    RPAD('010-1594-',13,'*'),
+    RPAD('971225-',14,'*')
+FROM DUAL;
+```
+<br>
+
+## `두 문자열 데이터를 합치는 함수`
+> ### CONCAT()   
+```
+SELECT 
+    CONCAT(first_name,last_name),
+    CONCAT(first_name,CONCAT('_',last_name))
+FROM EMPLOYEES;
+```
+`|| 연산자`
+```
+문자열 데이터를 연결하는 || 연산자
+SELECT 
+    FIRST_NAME || LAST_NAME,
+    FIRST_NAME || '_' || LAST_NAME
+FROM EMPLOYEES;
+```
+<br>
+
+## `특정 문자를 지우는 함수`
+> ### TRIM,LTRIM,RTRIM
+```
+TRIM( [삭제 옵션(선택)],
+      [삭제할 문자(선택)] 
+      FROM [원본 문자열 데이터(필수)])
+
+LTRIM([원본 문자열 데이터(필수)],[삭제할 문자 집합(선택)])
+RTRIM([원본 문자열 데이터(필수)],[삭제할 문자 집합(선택)])
+```
+```
+//삭제할 문자가 없는경우 - 공백제거 
+
+SELECT 
+'['||(' A ')||']' AS TRIM_BEFORE,
+'['||TRIM(' A ')||']' AS TRIM,
+'['||TRIM(LEADING FROM ' A ')||']' AS LEADING,
+'['||TRIM(TRAILING FROM ' A ')||']' AS TRAILING,
+'['||TRIM(BOTH FROM ' A ')||']' AS BOTH
+FROM DUAL;
+
+TRIM_BEFOR TRIM   LEADING  TRAILING BOTH
+---------- ------ -------- -------- ------
+[ A ]      [A]    [A ]     [ A]     [A]
+
+//삭제할 문자가 있는 경우
+
+SELECT 
+'['||('+ A +')||']' AS TRIM_BEFORE,
+'['||TRIM('+' FROM '++ A ++')||']' AS TRIM,
+'['||TRIM(LEADING '+' FROM '+ A +')||']' AS LEADING,
+'['||TRIM(TRAILING '+' FROM '+ A +')||']' AS TRAILING,
+'['||TRIM(BOTH '+' FROM '+ A +')||']' AS BOTH
+FROM DUAL;
+
+TRIM_BEFORE    TRIM       LEADING      TRAILING     BOTH
+-------------- ---------- ------------ ------------ ----------
+[+ A +]        [ A ]      [ A +]       [+ A ]       [ A ]
+
+연속적으로 붙어있을경우나 패턴이 동일할경우 전부 삭제된다.
+```
+> LTRIM,RTRIM 사용법
+   
+```
+SELECT 
+'['||('+_ A _+')||']' AS TRIM_BEFORE,
+'['||TRIM('+_+_ A _+_+')||']' AS TRIM,
+'['||LTRIM('+_+_ A _+_+','+_')||']' AS LTRIM,
+'['||RTRIM('+_+_ A _+_+','+')||']' AS RTRIM,
+'['||RTRIM('+_+_ A _+_+','_+')||']' AS RTRIM_2
+FROM DUAL;
+
+TRIM_BEFORE   TRIM          LTRIM        RTRIM        RTRIM_2
+------------- ------------- ------------ ------------ ------------
+[+_ A _+]     [+_+_ A _+_+] [ A _+_+]    [+_+_ A _+_] [+_+_ A ]
 ```
