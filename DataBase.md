@@ -54,6 +54,39 @@ __위 조건을 만족하면서 특정 목적을 위해 여러 사람이 공유�
 __효율적인 관리와 검색을 위해 구조화한 데이터 집합을 `데이터베이스`라고 한다__
 <br>
 <br>
+
+> ## `데이터베이스의 구축 목적`
+
+### 1. 서로 다른 형태의 데이터(사용자 관점)의 <u>통합화(Integrated)</u>
+### 2. 중복된 데이터의 <u>일관성(Consistency)</u>유지
+### 3. 데이터의 정확성을 보장하는 <u>무결성(Integrity)</u>유지
+### 4. 데이터 <u>중복(Redundancy)</u>의 최소화
+### 5. 업무상 데이터의 <u>공유(Shared)</u>
+### 6. 데이터의 <u>보안성(Security)</u> 달성
+### 7. 데이터의 논리적,물리적 <u>독립성(Independency)</u>
+### 8. 데이터의 <u>표준화(Standard)</u>달성
+
+
+<br>
+
+> ## `스키마(Schema)`  
+1. 데이터베이스 논리적 구조를 정의
+2. 데이터 구조와 제약조건에 대한 명세
+
+> ## `데이터 모델링`
+```
+-정보시스템(DB)을 구축하기 위해 필요로 하는 정보를 분석
+-현실세계에서 존재하는 개체(ENTITY)들을 식별(객체의 유일성을 확인)하고
+-개체와 개체 사이의 관계(Relationship)를 정의하는 과정
+```
+> ### 모델링 순서
+1. 개념 데이터 모델링 ERD
+2. 논리적 데이터 모델링 Schema
+3. 물리 데이터 모델링 Definition
+
+
+<br>
+
 __파일 시스템과 DBMS__   
 1. 파일 시스템   
 
@@ -257,13 +290,14 @@ SQL은 RDBMS에서 데이터를 다루고 관리하는데 사용되는 데이터
      종류                        설명
      ---                         ---
 DQL(Data Query Language)         RDBMS에 저장한 데이터를 원하는 방식으로 조회하는 명령어
-Query : 문의
+Query : 문의                      
 DML(Data Manipulation Language)  RDBMS 내 테이블의 데이터를 저장,수정,삭제 하는 명령어
-Manipulation: 조작
+Manipulation: 조작 | 데이터조작어
 DDL(Data Definition Language)    RDBMS 내 데이터 관리를 위해 테이블을 포함한
-Definition : 정의                      여러 객체를 생성 , 수정 , 삭제를 하는 명령어
+Definition : 정의  | 데이터정의어       여러 객체를 생성 , 수정 , 삭제를 하는 명령어
 TCL(Transaction Control Laguage) 트랜잭션 데이터의 영구 저장,취소 등과 관련된 명령어
 Transaction : 처리
-DCL(Data Control Language)       데이터 사용 권한과 관련된 명령어
+DCL(Data Control Language)       논리적인 작업의 단위로 DML에 의해 조작된 결과를 다루는 명령어
+Control : 제어     | 데이터제어어       데이터 사용 권한과 관련된 명령어
 ```
 
