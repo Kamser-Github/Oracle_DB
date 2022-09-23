@@ -104,3 +104,9 @@ SELECT
     END
 FROM EMPLOYEES;
 ```
+
+
+
+> 애매한 상태
++ SUBQUERY - 다중서브쿼리 (재복습 필요)
++ 상호 연관 서브쿼리 - 계속 불발남.
