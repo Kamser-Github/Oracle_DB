@@ -91,8 +91,7 @@ SELECT MAX(SAL)
 `날짜 및 문자 데이터에서도 사용이 가능하다`
 > 부서 번호가 20인 사원의 입사일중 최근 입사일 출력하기
 ```
-SELECT 
-    *
+    
 FROM EMPLOYEES
 WHERE HIRE_DATE=(SELECT MAX(HIRE_DATE) FROM EMPLOYEES);
 

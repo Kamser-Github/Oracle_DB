@@ -98,4 +98,9 @@ WHEN 조건에 두개 이상의 비교대상이 있으면
 비교대상 인자를 제거하고
 WHEN 구절에 WHERE 구절에 사용하듯이 사용해야한다.
 
+SELECT
+    CASE 
+    WHEN EXTRACT(MONTH FROM HIRE_DATE)IN(2,4,6) THEN '짝수'
+    END
+FROM EMPLOYEES;
 ```
