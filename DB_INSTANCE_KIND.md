@@ -90,6 +90,22 @@ CREATE INDEX IDX_VIP_GRADE;
 ```
 SELECT * FROM USER_IND_COLUMNS;
 ```
+### `인덱스를 사용했는지 확인해보기`
+```
+EXPLAIN PLAN FOR 
+SELECT * 
+  FROM TEST1 
+WHERE ID = 1;
+
+//PLAN 테이블에 FOR 뒤에 문장이 어떻게 실행되고있는지 정보가 작성된다.
+
+SELECT 
+    PLAN_TABLE_OUTPUT 
+FROM 
+    TABLE(DBMS_XPLAN.DISPLAY());
+
+그후 위 명령어를 사용하면 INDEXFMF 사용햇는지 알려준다.
+```
 > 인덱스 삭제
 DROP INDEX 인덱스 이름;
 ```
@@ -242,6 +258,29 @@ WHERE R>5;
 
 데이터가 많아 질수록 번호를 계산하는 시간이 늘고
 사용하는 사람이 동시에 사용할경우 번호가 겹칠수도 있다.
+```
+> 시퀸스 사용가능한 영역
+```
+[사용규칙]
+  * NEXTVAL, CURRVAL을 사용할 수 있는 경우   
+  - subquery가 아닌 select문   
+  - insert문의 select절   
+  - insert문의 value절   
+  - update문의 set절
+  
+  * NEXTVAL, CURRVAL을 사용할 수 없는 경우   
+  - view의 select절   
+  - distinct 키워드가 있는 select문   
+  - group by, having, order by절이 있는 select문   
+  - select, delete, update의 subquery   
+  - create table, alter table 명령의 default값
+  
+  ** CMD에서는 자동으로 추가할수 없지만
+  프로그램에서는 자동으로 추가할수있다
+  테이블 -> 테이블명 클릭 -> 
+  열 -> 편집 우측하단 -> 
+  ID열 -> 열 시퀀스 -> 시퀀스 추가
+  **
 ```
 
 ### `시퀸스 생성`

@@ -104,13 +104,11 @@ SELECT
     END
 FROM EMPLOYEES;
 ```
-
-
-
 > 애매한 상태
 + SUBQUERY - 다중서브쿼리 (재복습 필요)
 + 상호 연관 서브쿼리 - 계속 불발남.   
 + MARGE - 두세번더 보기
++ INDEX
 
 > 테이블과 같은 열 구조를 갖고 데이터는 복사하기 싫을때   
 ```
@@ -121,3 +119,30 @@ CREATE TABLE COPY_TMP
 테이블을 카피해서 가져오지만
 옵션이 항상 FALSE이기 때문에 구조만 가져온다.
 ```
+
+## 다른 테이블과 관계를 맺는 FOREIGN KEY
+> 외래키,외부키로 불리며 서로 다른 테이블 간 관계를 정의한다.
+```
+특정 테이블에서 PRIMARY KEY 제약조건을 지정한 열을
+다른 테이블의 특정 열에서 참조하겠다는 의미로 지정할 수 있다.
+```
+> 참조하는 테이블간 제약 조건 살펴보기
+```
+SELECT OWNER,CONSTRAINT_NAME,CONSTRAINT_TYPE,TABLE_NAME,
+       R_OWNER,R_CONSTRAINT_NAME
+FROM USER_CONSTRAINTS
+WHERE TABLE_NAME IN('CUSTOMERS','ORDERS');
+
+OWNER      CONSTRAINT_NAME      CO TABLE_NAME R_OWNER    R_CONSTRAINT_NAME
+---------- -------------------- -- ---------- ---------- ------------------
+C##OT      SYS_C008344◆        C  CUSTOMERS
+C##OT      SYS_C008345          C  CUSTOMERS
+C##OT      SYS_C008346★        P  CUSTOMERS
+C##OT      SYS_C008353          C  ORDERS
+C##OT      SYS_C008354          C  ORDERS
+C##OT      SYS_C008355          C  ORDERS
+C##OT      SYS_C008356          C  ORDERS
+C##OT      SYS_C008357          P  ORDERS
+C##OT      FK_ORDERS_CUSTOMERS  R  ORDERS     C##OT      SYS_C008346★
+C##OT      FK_ORDERS_EMPLOYEES  R  ORDERS     C##OT      SYS_C008334◆
+
