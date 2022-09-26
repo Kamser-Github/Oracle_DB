@@ -82,6 +82,8 @@ CREATE INDEX [인덱스이름]
                 열이름3 ASC OR DESC,
               )
 ```
+> 추가 정보 확인후 추가할 파트
+
 > 인덱스 생성하기
 ```
 CREATE INDEX IDX_VIP_GRADE;
