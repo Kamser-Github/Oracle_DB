@@ -145,4 +145,9 @@ C##OT      SYS_C008356          C  ORDERS
 C##OT      SYS_C008357          P  ORDERS
 C##OT      FK_ORDERS_CUSTOMERS  R  ORDERS     C##OT      SYS_C008346★
 C##OT      FK_ORDERS_EMPLOYEES  R  ORDERS     C##OT      SYS_C008334◆
+```
 
+> 사용자 생성시 등장하는 TABLESPACE 알아보기
+```
+DBMS_USER.md 참조
+```
