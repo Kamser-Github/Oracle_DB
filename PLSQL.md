@@ -362,3 +362,213 @@ END;
 
 PL/SQL 프로시저가 성공적으로 완료되었습니다.
 ```
+
+>IF-THEN-ELSIF
+```
+IF 조건식1 THEN
+    조건식 1이 true일때 수행할 명령어 1;
+ELSIF 조건식2
+    조건식 2이 true일때 수행할 명령어 2;
+ELSIF 조건식3
+    조건식 3이 true일때 수행할 명령어 3;
+ELSE
+    조건식1,2,3가 false일때 수행할 명령어 4;
+```
+_예_
+```
+SET SERVEROUTPUT ON;
+DECLARE
+    V_NUMBER NUMBER := 99;
+BEGIN
+    IF V_NUMBER > 90 THEN
+        DBMS_OUTPUT.PUT_LINE('A');
+    ELSIF V_NUMBER >80 THEN
+        DBMS_OUTPUT.PUT_LINE('B');
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('C');
+    END IF;
+END;
+/
+A
+
+PL/SQL 프로시저가 성공적으로 완료되었습니다.
+
+자주 잊게 되는것
+    END IF;
+END;
+/
+```
+
+### `CASE 조건문`   
+```
+    종류                설명
+    ---                 ---
+단순 CASE        비교 기준이 되는 조건의 값이 여러가지 일때
+                 해당 값만 명시하여 작업수행
+검색 CASE        특정한 비교 기준 없이 여러 조건식을 나열하여
+                 조건식에 맞는 작업수행
+```
+>단순 케이스
+```
+비교 기준(여러 가지 결과 값이 나올 수 있는)이 되는 변수
+또는 식을 명시한다. 그 결과 값에 따라 수행할 작업을 지정
+
+그냥 CASE문과 비슷하다.
+```
+_형식_
+```
+CASE 비교 기준
+    WHEN '값1' THEN
+        비교기준='값1' 수행할 명령어;
+    WHEN '값2' THEN
+        비교기준='값2' 수행할 명령어;
+      :              :
+    ELSE
+        비교기준과 다를경우 수행할 명령어;
+END CASE;
+```
+_예_
+```
+DECLARE
+    PRICE_LIST PRODUCTS%ROWTYPE;
+BEGIN
+    SELECT * INTO PRICE_LIST
+        FROM PRODUCTS
+    WHERE PRODUCT_ID=13;
+    CASE ROUND(PRICE_LIST.STANDARD_COST,-2)
+        WHEN 500 THEN 
+            DBMS_OUTPUT.PUT_LINE('싼데?');
+        WHEN 600 THEN
+            DBMS_OUTPUT.PUT_LINE('그럭저럭?');
+        WHEN 700 THEN
+            DBMS_OUTPUT.PUT_LINE('정가인듯');
+        WHEN 800 THEN
+            DBMS_OUTPUT.PUT_LINE('비싸!!');
+    END CASE;
+END;
+/
+//저 물건 값을 십의자리에서 반올림하면 600이다.
+
+그럭저럭?
+PL/SQL 프로시저가 성공적으로 완료되었습니다.
+```
+> 검색 CASE
+_형식_
+```
+    CASE
+        WHEN 조건식1 THEN
+            조건식1이 true일 경우 실행할 명령어1;
+        WHEN 조건식2 THEN
+            조건식2이 true일 경우 실행할 명령어2;
+        WHEN 조건식3 THEN
+            조건식3이 true일 경우 실행할 명령어3;
+        ELSE
+            조건식1,2,3이모두 FALSE일때 실행할 명령어4;
+    END CASE;
+END;
+/
+```
+_예_   
+```
+DECLARE
+    PRODUCT_PRICES PRODUCTS%ROWTYPE;
+    ITEM_PRICE NUMBER(4);
+BEGIN
+    SELECT STANDARD_COST INTO PRODUCT_PRICES.STANDARD_COST
+        FROM PRODUCTS
+    WHERE PRODUCT_ID=13;
+    ITEM_PRICE := PRODUCT_PRICES.STANDARD_COST;
+    CASE
+        WHEN ITEM_PRICE<500 THEN DBMS_OUTPUT.PUT_LINE('최저가');
+        WHEN ITEM_PRICE<600 THEN DBMS_OUTPUT.PUT_LINE('중저가');
+        WHEN ITEM_PRICE<700 THEN DBMS_OUTPUT.PUT_LINE('정가');
+        ELSE
+            DBMS_OUTPUT.PUT_LINE('너무 비쌈');
+    END CASE;
+END;
+/
+```
+## 반복 제어문
+> 특정 작업을 반복하여 수행하고자 할때 사용
+```
+        종류            설명
+        ---             ---
+    기본 LOOP       기본 반박문
+    WHILE LOOP      반복 종료를 위한 조건식을 지정하고 만족하면 종료
+    FOR LOOP        반복 횟수를 정하여 반복수행
+  Cusor FOR LOOP    커서를 활용한 반복수행
+```
+> 보조 제어문
+```
+    종료                설명
+    ---                 ---
+    EXIT            수행 중인 반복 종료
+  EXIT-WHEN         반복 종료를 위한 조건식을 지정하고 만족하면 반복 종료
+  CONTINUE          수행 중인 반복의 현재 주기를 건너뜀
+ CONTINUE-WHEN      특정 조건식을 지정하고 조건식을 만족하면 현재 반복 주기를 건너뜀
+```
+### `기본 LOOP`
+> 형식
+```
+LOOP
+    반복 수행 작업;
+END LOOP;
+
+기본 반복문은 반복 종료시점이나 조건식이 따로 없으므로
+종료가 필요할경우 EXIT 명령어를 사용하여 종료한다.
+```
+_예_
+```
+DECLARE
+    N_NUMBER NUMBER(2) := 1;
+BEGIN
+    LOOP
+        N_NUMBER := N_NUMBER+1;
+        EXIT WHEN N_NUMBER>4;
+    END LOOP;
+    DBMS_OUTPUT.PUT_LINE('N_NUMBER :='||N_NUMBER);
+END;
+/
+DECLARE
+    N_NUMBER NUMBER(2) := 1;
+BEGIN
+    LOOP
+        N_NUMBER := N_NUMBER+1;
+        IF N_NUMBER>4 THEN
+            EXIT;
+        END IF;
+    END LOOP;
+    DBMS_OUTPUT.PUT_LINE('N_NUMBER :='||N_NUMBER);
+END;
+//또다른 예제 EXIT-WHEN을 써서 나가기
+DECLARE
+    N_NUMBER NUMBER(2) := 1;
+BEGIN
+    LOOP
+        N_NUMBER := N_NUMBER+1;
+        IF N_NUMBER>4 THEN
+            EXIT;
+        END IF;
+    END LOOP;
+    DBMS_OUTPUT.PUT_LINE('N_NUMBER :='||N_NUMBER);
+END;
+/
+;
+```
+### ` WHILE LOOP`
+> 반복 수행 여부를 결정하는 조건식을 먼저 지정   
+true 실행 false 반복종료
+```
+WHILE 조건식 LOOP
+    반복 작업 수행;
+END LOOP;
+
+java나 js에서 구조랑 매우 흡사하다
+
+while(조건식){
+    
+}
+여는 괄호 : LOOP
+닫는 괄호 : LOOP END;
+```
+_예_
