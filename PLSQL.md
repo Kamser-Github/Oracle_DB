@@ -572,3 +572,113 @@ while(조건식){
 닫는 괄호 : LOOP END;
 ```
 _예_
+```
+구구단 만들어보기
+DECLARE
+    N_NUMBER INTEGER := 2;
+    M_NUMBER INTEGER;
+BEGIN
+    WHILE N_NUMBER<10 LOOP
+        M_NUMBER := 1;
+        WHILE M_NUMBER<10 LOOP
+            DBMS_OUTPUT.PUT_LINE(N_NUMBER||'X'||M_NUMBER||'='||N_NUMBER*M_NUMBER);
+            M_NUMBER := M_NUMBER+1;
+        END LOOP;
+        N_NUMBER := N_NUMBER+1;
+    END LOOP;
+END;
+/
+```
+### `FOR LOOP`
+```
+반복을 지정할수 있는 반복문
+
+지정한 시작부터 1씩 증가하여 종료값까지 작업을 반복수행한다.
+FOR문 뒤 i는 반복 수행중 시작값과 종료값 사이의 현재 숫자가 저장되는
+특수한 변수로 카운터(counter)라고 한다,
+
+카운터는 선언부에서 정의하지 않고 FOR LOOP문에서 바로 정의하여 사용
+FOR LOOP안에서만 사용가능하고,할당도 안되고,참조만 가능
+```
+> 기본형식
+```
+FOR i IN 시작 값 ..종료값 LOOP
+    반복 작업 수행;
+END LOOP;
+```
+_예_
+```
+BEGIN
+    FOR i in 1..4 LOOP
+        DBMS_OUTPUT.PUT_LINE('i의 값 :'||i);
+    END LOOP;
+END;
+/
+i의 값 :1
+i의 값 :2
+i의 값 :3
+i의 값 :4
+```
+> 종료값에서 시작값으로 역순으로 반복은 REVERSE    
+
+`단 시작 값과 종료값의 위치는 같다는것`
+>기본형식
+```
+FOR i IN REVERSE 시작값 .. 종료값 LOOP
+    반복 작업수행
+END LOOP;
+```
+_예_
+```
+BEGIN
+    FOR 카운트 IN REVERSE 1..4 LOOP
+        DBMS_OUTPUT.PUT_LINE('카운트 :'||카운트);
+    END LOOP;
+END;
+/
+//한글도 되고 문자열도 된다
+```
+
+### `CONTINUE문 , CONTINUE-WHEN문`
+> 반복수행중 CONINUE가 실행되면 바로 건너 뛴다.
+```
+BEGIN
+    FOR i IN 1..4 LOOP
+        CONTINUE WHEN MOD(i,2) = 1;
+        DBMS_OUTPUT.PUT_LINE('현재 i의 값 : '||i);
+    END LOOP;
+END;
+/
+
+현재 i의 값 : 2
+현재 i의 값 : 4
+```
+_소수만 출력해보기_
+```
+DECLARE
+    CNT INTEGER := 0;
+BEGIN
+    FOR i IN 2..100 LOOP
+        CNT := 0;
+        FOR j IN 1..i LOOP
+            IF MOD(i,j)=0 THEN
+                CNT := CNT+1;
+            END IF;
+        END LOOP;
+        CASE
+            WHEN CNT=2 THEN DBMS_OUTPUT.PUT_LINE('소수 : '||i);
+            ELSE CNT := 0;
+        END CASE;
+    END LOOP;
+END;
+/
+
+소수 : 2
+소수 : 3
+소수 : 5
+  :    :
+소수 : 89
+소수 : 97
+
+PL/SQL 프로시저가 성공적으로 완료되었습니다.
+```
