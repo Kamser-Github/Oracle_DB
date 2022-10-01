@@ -246,6 +246,13 @@ END;
 ```
 구조 : 변수이름 테이블 이름%ROWTYPE;
 ```
+> 테이블 이름에 올수 있는것
+1. 테이블 이름
+2. 커서명
+3. 뷰
+- 서브쿼리는 안된다.
+
+
 ```
 DECLARE
     MANAGER VIP_GRADE%ROWTYPE;
