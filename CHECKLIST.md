@@ -151,3 +151,36 @@ C##OT      FK_ORDERS_EMPLOYEES  R  ORDERS     C##OT      SYS_C008334◆
 ```
 DBMS_USER.md 참조
 ```
+
+## EXCEPTION 이름없는 예외 처리시
+> 예외 번호를 확인하고 추가하자.
+```SQL
+CREATE PROCEDURE EMP_TMP_INSERT
+(
+    ID EMP_TMP.EMPLOYEE_ID%TYPE,
+    NAME2 EMP_TMP.EMPLOYEE_ID%TYPE
+)
+IS
+    --DECLARE 대신
+    PK_ERROR EXCEPTION;
+    PRAGMA EXCEPTION_INIT(PK_ERROR,-1);
+    /*
+    ORA-00001: 무결성 제약 조건(C##OT.PK_EMP_ID)에 위배됩니다
+    여기서 ORA-00001이 예외 번호인줄 알았는데
+    TO_CHAR(SQLCODE) 예외 처리 함수로 코드 번호를 따로 받아서
+    그걸 입력해야 한다.
+    */
+BEGIN
+    INSERT INTO EMP_TMP VALUES(ID,NAME2);
+    DBMS_OUTPUT.PUT_LINE('값 입력 완료');
+EXCEPTION
+--    WHEN OTHERS THEN
+--        DBMS_OUTPUT.PUT_LINE('에러발생');
+--        DBMS_OUTPUT.PUT_LINE('SQLCORE : '||TO_CHAR(SQLCODE));
+--        DBMS_OUTPUT.PUT_LINE('SQLERRM : '||TO_CHAR(SQLERRM));
+      WHEN PK_ERROR THEN
+        DBMS_OUTPUT.PUT_LINE('에러발생');
+END;
+/
+```
+## 테이블 생성시 IN

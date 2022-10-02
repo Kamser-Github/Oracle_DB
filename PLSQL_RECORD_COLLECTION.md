@@ -18,7 +18,7 @@ TYPE 레코드 이름 IS RECORD(
 자료형에 %TYPE , %ROWTYPE도 가능
 ```
 _예_
-```
+```SQL
 SET SERVEROUTPUT ON;
 DECLARE
     TYPE RECO IS RECORD(
@@ -46,7 +46,7 @@ MANAGER : 22
 > 테이블에 데이터를 삽입,수정할대도 사용가능하다.   
 
 _예_
-```
+```SQL
 DECLARE
     TYPE REC_HOME IS RECORD(
         NO HOO.CUSTOMER_ID%TYPE,
@@ -68,7 +68,7 @@ DECLARE
 ### `레코드를 사용한 UPDATE`   
 > ROW키워드와 함께 레코드 이름을 명시   
  
-```
+```SQL
 DECLARE
     TYPE REC_HOME IS RECORD(
         NO HOO.CUSTOMER_ID%TYPE,
@@ -120,7 +120,7 @@ DECLARE
 SELECT * FROM HOO;
 ```
 ### `레코드를 포함한 레코드`
-```
+```SQL
 --레코드 안에 레코드
 --CUSTOMER의 아이디중 한명이 멀 주문햇는지 알고싶다.
 DECLARE
@@ -192,7 +192,7 @@ INDEX BY 인덱스형;
 ```
 
 > 연관배열 사용해보기
-```
+```SQL
 DECLARE
     TYPE ITAB_EX IS TABLE OF VARCHAR2(20)
     INDEX BY PLS_INTEGER;
@@ -225,7 +225,7 @@ test_arr(6) : 6th data
 
 > 레코드를 활용한 연관 배열   
    
-```
+```SQL
 DECLARE
     TYPE REC IS RECORD(
         no employees.employee_id%TYPE,
@@ -286,7 +286,7 @@ arr[1] = new int[] {"a","b"} 느낌처럼 사용하면된다.
 
 ```
 > %ROWTYPE도 적용해보기
-```
+```SQL
 DECLARE
 //여기서 주의할점 OF 뒤에는 자료형이 와야한다.
 //변수가 올수 없다는것
@@ -334,7 +334,7 @@ TRIM      컬렉션의 크기를 감소시킨다,중첩테이블과 VARRAY에서
 ` 주의사항 `
 > BOOLEAN 타입은 OUTPUT.PUT_LINE으로 출력이 안된다.   
  
-```
+```SQL
 SQL에는 없는 타입이기 때문에 출력이 안되므로
 따로 변수에 결과물을 변수에 담아서 출력해야한다.
 DECLARE
