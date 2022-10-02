@@ -108,6 +108,27 @@ FROM
 
 그후 위 명령어를 사용하면 INDEXFMF 사용햇는지 알려준다.
 ```
+`인덱스 사용 여부`
+```SQL
+--인덱스를 사용한 경우
+EXPLAIN PLAN FOR 
+SELECT * FROM CUSTOMERS WHERE CUSTOMER_ID<500 AND ROWNUM<6;
+
+--인덱스를 사용하지 않은경우
+EXPLAIN PLAN FOR 
+SELECT * FROM CUSTOMERS WHERE CREDIT_LIMIT<9000 AND ROWNUM<6;
+
+SELECT 
+    PLAN_TABLE_OUTPUT 
+FROM 
+    TABLE(DBMS_XPLAN.DISPLAY());
+
+--인덱스를 사용한 경우
+|*  3 |    INDEX RANGE SCAN  | SYS_C008346 | | | 1 (0)| 00:00:01 |
+
+--인덱스를 사용하지 않은 경우
+|*  2 |   TABLE ACCESS FULL| CUSTOMERS | 5 |385 |2 (0)| 00:00:01 |
+```
 > 인덱스 삭제
 DROP INDEX 인덱스 이름;
 ```

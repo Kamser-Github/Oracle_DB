@@ -1,6 +1,8 @@
-```
+```SQL
     순위 함수
     정렬된 순서대로 일련번호를 붙이고 싶다면 - ROWNUM
+
+    --ROWNUM이 적용되는 순서
     
     SELECT ROW_NUMBER(),employee_id,first_name
     FROM employees
