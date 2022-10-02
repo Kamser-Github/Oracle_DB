@@ -347,3 +347,33 @@ END;
 /
 P_NUM: 10
 ```
+
+### `프로시저 오류 정보 확인하기`
+```SQL
+CREATE OR REPLACE PROCEDURE PRO_ERR
+IS
+    ERR NUMBER;
+BEGIN
+    ERR = 100;--여기구간이 예외발생지
+    DBMS_OUTPUT.PUT_LINE('ERR'||ERR);
+END;
+/
+```
+
+> ## SHOW ERRORS로 오류 확인
+```
+가장 최근에 생성되거나 변경된 서브프로그램의 오류 정보를 출력
+```
+>기본형식
+```
+SHOW ERR 프로그램 종류 프로그램 이름;
+SHOW ERR PROCEDURE PRO_ERR;
+```
+_예_
+```
+LINE/COL ERROR
+-------- ------------------------------------------------------
+5/9      PLS-00103: 심볼 "="를 만났습니다 다음 중 하나가 기대될 때:
+         := . ( @ % ;
+         심볼이 ":= 계속하기 위해 "=" 전에 삽입되었음
+```
