@@ -340,3 +340,133 @@ ORA-20101: the new credit44000 cannot increase to more than double, the current 
 ORA-06512: "C##OT.CUTOMSERS_UPDATE_CREDIT_TRG",  4행
 ORA-04088: 트리거 'C##OT.CUTOMSERS_UPDATE_CREDIT_TRG'의 수행시 오류
 ```
+
+## 트리거 형식 - 4 INSTEAD OF 트리거
+```
+INSTEAD OF 트리거는 DML문을 통해서 직접 수정할수 없는 VIEW를 통해서
+테이블의 데이터를 업데이트 할수있게 한다.
+
+--업데이트를 할수없는 VIEW같은 경우 건너뛰고 다른 DML문을 실행한다.
+--수정이 가능한 뷰에 각행에 대행 INSTEAD OF 트리거가 발동한다.
+
+INSTEAD OF는 VIEW에서만 사용이 가능하다.
+```
+__기본 구문__
+```SQL
+CREATE [OR REPLACE] TRIGGER trigger_name
+INSTEAD OF {INSERT | UPDATE | DELETE}
+ON view_name
+FOR EACH ROW
+BEGIN
+    EXCEPTION
+    ...
+END;
+```
+__예제용 VIEW 생성__
+```sql
+CREATE VIEW vw_customers AS
+    SELECT 
+        name, 
+        address, 
+        website, 
+        credit_limit, 
+        first_name, 
+        last_name, 
+        email, 
+        phone
+    FROM 
+        customers
+    INNER JOIN contacts USING (customer_id);
+```
+> VIEW에 값 넣어보기.
+```sql
+INSERT INTO 
+    vw_customers(
+        name, 
+        address, 
+        website, 
+        credit_limit, 
+        first_name, 
+        last_name, 
+        email, 
+        phone
+    )
+VALUES(
+    'Lam Research',
+    'Fremont, California, USA', 
+    'https://www.lamresearch.com/',
+    2000,
+    'John',
+    'Smith',
+    'john.smith@lamresearch.com',
+    '+1-510-572-0200'
+);
+
+SQL 오류: ORA-01779: 키-보존된것이 아닌 테이블로 대응한 열을 수정할 수 없습니다
+01779. 00000 -  "cannot modify a column which maps to a non key-preserved table"
+*Cause:    An attempt was made to insert or update columns of a join view which
+           map to a non-key-preserved table.
+*Action:   Modify the underlying base tables directly.
+
+--예외 발생
+```
+> INSTEAD OF 트리거 생성
+```sql
+CREATE OR REPLACE TRIGGER new_customer_trg
+    INSTEAD OF INSERT ON vw_customers
+    FOR EACH ROW
+DECLARE
+    l_customer_id NUMBER;
+BEGIN
+    --insert a new customer first
+    INSERT INTO customers_copy(customer_id,name, address, website, credit_limit)
+    --copy테이블이기 때문에 시퀸스와 pk가 지정이 되지 않아서
+    --따로 시퀸스를 만들어서 추가를 했다.
+    VALUES(CUSTOMERS_COPY_SEQ.NEXTVAL,:NEW.NAME, :NEW.address, :NEW.website, :NEW.credit_limit)
+    --RETURNING INTO 절은 INSERT, UPDATE, DELETE문이 
+    --실행되면서 삽입, 수정 혹은 삭제된 데이터를 변수에 담는 역할을 수행한다.
+    RETURNING customer_id INTO l_customer_id;
+    -- insert the contact
+    INSERT INTO contacts_copy(first_name, last_name, email, phone, customer_id)
+    VALUES(:NEW.first_name, :NEW.last_name, :NEW.email, :NEW.phone, l_customer_id);
+    
+    EXCEPTION
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE(TO_CHAR(SQLCODE));
+            DBMS_OUTPUT.PUT_LINE(SQLERRM);
+END;
+```
+__적용하기__
+```SQL
+INSERT INTO 
+        vw_customers(
+            name, 
+            address, 
+            website, 
+            credit_limit, 
+            first_name, 
+            last_name, 
+            email, 
+            phone
+        )
+    VALUES(
+        'Lam Research',
+        'Fremont, California, USA', 
+        'https://www.lamresearch.com/',
+        2000,
+        'John',
+        'Smith',
+        'john.smith@lamresearch.com',
+        '+1-510-572-0200'
+    );
+```
+__확인하기__
+```SQL
+SELECT * FROM customers_copy WHERE CUSTOMER_ID>319;
+CUSTOMER_ID NAME            ADDRESS                   WEBSITE                        CREDIT_LIMIT
+----------- --------------- ------------------------- ------------------------------ ------------
+        320 Lam Research    Fremont, California, USA  https://www.lamresearch.com/           2000
+        321 Lam Research    Fremont, California, USA  https://www.lamresearch.com/           2000
+
+--정확이 잘들어가고 있다.
+```
