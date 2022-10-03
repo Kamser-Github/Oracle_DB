@@ -138,6 +138,37 @@ EXCEPTION
 END;
 /
 ```
+### __raise_application_error__
+```
+사용자 정의 오류를 발생시킬수 있는 명령어
+이걸 사용하면 처리되지 않은 예외를 반환하는 대신
+호출자에게 오류를 보고할 수 있다.
+
+실행이되면 현재 블록 실행을 즉시 중지되고
+OUT 또는 IN OUT 매개변수에 대한 변경사항을 되돌린다.
+
+패키지변수와 같은 전역 데이터 구조 및 테이블과 같은
+데이터베이스 개체에 대한 변경 사항은 롤백되지 않는다.
+DML의 효과를 되돌리려면 ROLLBACK을 명시적으로 작성한다.
+```
+> 기본 구문
+```SQL
+raise_application_error(
+    error_number, 
+    message --message 최대길이 2048byte
+            --한글로는 680자
+    [, {TRUE | FALSE}]
+    --FALSE 오류가 이전 모든 오류를 대체
+    --TRUE면 이전 오류 스택에 추가된다.
+);
+--continue 같은 느낌
+EX)raise_application_error(
+    -20100,
+    'Cannot update customer credit from 28th to 31st'
+);
+```
+
+
 > 오류 코드와 오류 메세지 사용
 ```
 오류 처리부가 잘 작성이 되어있다면 PL/SQL은 정상 종료된다.

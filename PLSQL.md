@@ -38,7 +38,7 @@ EXCEPTION(선택)
 END;
 ```
 > 예
-```
+```sql
 SET SERVEROUTPUT ON;
 BEGIN
     DBMS_OUTPUT.PUT_LINE('HELLO,PL/SQL');
@@ -74,7 +74,7 @@ SET SERVEROUTPUT ON;
 위 부분은 생략이 가능하다. 선언만하는 경우
 ```
 > 예
-```
+```sql
 DECLARE
     V_EMPNO NUMBER(4) := 7788;
     V_NAME NVARCHAR2(10);
@@ -107,7 +107,7 @@ PL/SQL 프로시저가 성공적으로 완료되었습니다.
 한번 저장한 값은 변경되지 않는다.
 ```
 > 값을 변경할 경우 예시
-```
+```sql
 DECLARE
     V_EMPNO CONSTANT NUMBER(4) := 7788;
     V_NAME NVARCHAR2(10) := 'CAT';
@@ -144,7 +144,7 @@ DEFAULT 키워드는 변수에 저장할 기본값을 지정한다.
 변수이름 자료형 DEFAULT 값 또는 값이 도출되는 여러 표현식;
 ```
 > >예
-```
+```sql
 DECLARE
     V_EMPNO CONSTANT NUMBER(4) := 7788;
     V_NAME NVARCHAR2(10) DEFAULT 'CAT';
@@ -170,7 +170,7 @@ NOT NULL 키워드를 사용할 경우 값을 할당해줘야한다,DEFAULT도 �
 변수 이름 자료형 NOT NULL (:= 또는 NOT NULL) 값또는 값이 도출되는 여러 표현식;
 ```
 _예시_
-```
+```sql
 DECLARE
     V_NAME VARCHAR2(15) NOT NULL := 'NOT NULL';
 BEGIN   
@@ -231,7 +231,7 @@ PL/SQL 프로시저가 성공적으로 완료되었습니다.
 구조 : 변수 이름 테이블이름.열이름 %TYPE;
 ```
 _예_  
-``` 
+```sql
 DECLARE
     V_DEPTNO DEPT.DEPTNO%TYPE := 50;
 BEGIN
@@ -253,7 +253,7 @@ END;
 - 서브쿼리는 안된다.
 
 
-```
+```sql
 DECLARE
     MANAGER VIP_GRADE%ROWTYPE;
 BEGIN
@@ -267,7 +267,7 @@ END;
 /
 ```
 ` 주의 사항 `
-```
+```sql
 DECLARE
     MANAGER VIP_GRADE%ROWTYPE;
 BEGIN
@@ -329,7 +329,7 @@ END IF;
 + 수행할 명령어 : 여러 명령어 지정가능
 ```
 _예_   
-```
+```sql
 DECLARE
     MANAGER EMPLOYEES%ROWTYPE;
 BEGIN 
@@ -354,7 +354,7 @@ ELSE
 END IF;
 ```
 _예_   
-```
+```sql
 DECLARE
     V_NUMBER NUMBER(2) := 15;
 BEGIN
@@ -382,7 +382,7 @@ ELSE
     조건식1,2,3가 false일때 수행할 명령어 4;
 ```
 _예_
-```
+```sql
 SET SERVEROUTPUT ON;
 DECLARE
     V_NUMBER NUMBER := 99;
@@ -435,7 +435,7 @@ CASE 비교 기준
 END CASE;
 ```
 _예_
-```
+```sql
 DECLARE
     PRICE_LIST PRODUCTS%ROWTYPE;
 BEGIN
@@ -476,7 +476,7 @@ END;
 /
 ```
 _예_   
-```
+```sql
 DECLARE
     PRODUCT_PRICES PRODUCTS%ROWTYPE;
     ITEM_PRICE NUMBER(4);
@@ -525,7 +525,7 @@ END LOOP;
 종료가 필요할경우 EXIT 명령어를 사용하여 종료한다.
 ```
 _예_
-```
+```sql
 DECLARE
     N_NUMBER NUMBER(2) := 1;
 BEGIN
@@ -579,7 +579,7 @@ while(조건식){
 닫는 괄호 : LOOP END;
 ```
 _예_
-```
+```sql
 구구단 만들어보기
 DECLARE
     N_NUMBER INTEGER := 2;
@@ -614,7 +614,7 @@ FOR i IN 시작 값 ..종료값 LOOP
 END LOOP;
 ```
 _예_
-```
+```sql
 BEGIN
     FOR i in 1..4 LOOP
         DBMS_OUTPUT.PUT_LINE('i의 값 :'||i);
@@ -630,7 +630,7 @@ i의 값 :4
 
 `단 시작 값과 종료값의 위치는 같다는것`
 >기본형식
-```
+```sql
 FOR i IN REVERSE 시작값 .. 종료값 LOOP
     반복 작업수행
 END LOOP;
@@ -648,7 +648,7 @@ END;
 
 ### `CONTINUE문 , CONTINUE-WHEN문`
 > 반복수행중 CONINUE가 실행되면 바로 건너 뛴다.
-```
+```sql
 BEGIN
     FOR i IN 1..4 LOOP
         CONTINUE WHEN MOD(i,2) = 1;
@@ -661,7 +661,7 @@ END;
 현재 i의 값 : 4
 ```
 _소수만 출력해보기_
-```
+```sql
 DECLARE
     CNT INTEGER := 0;
 BEGIN
