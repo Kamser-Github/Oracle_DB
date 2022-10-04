@@ -470,3 +470,230 @@ CUSTOMER_ID NAME            ADDRESS                   WEBSITE                   
 
 --정확이 잘들어가고 있다.
 ```
+
+## `단일 트리거 비활성화`
+> 경우에 따라 테스트 및 문제 해결을 위해 트리거를 비활성화할수 있다.
+```sql
+ALTER TRIGGER trigger_name DISABLE;
+> 예
+cutomers의 트리거를 비활성화 한다면
+ALTER TRIGGER cutomers_adudit_trg DISABLE;
+```
+## `테이블의 모든 트리거 비활성화`
+```SQL
+ALTER TABLE table_name DISABLE ALL TRIGGERS;
+
+> 예 - cutomers의 테이블에 있는 트리거 비활성화
+ALTER TABLE cutomers DISABLE ALL TRIGGERS;
+```
+## `비활성화된 트리거 만들기`
+```
+업무시간동안 트리거를 만들고 현재 트랜잭션에 영향을 주지 않기위해서
+안전하게 하기 위해서 먼저 비활성화 상태에서 트리거를 생성할수 있다.
+```
+__기본 구문__
+```sql
+CREATE OR REPLACE TRIGGER trigger_name
+    BEFORE | AFTER event
+    [FOR EACH ROW]
+    DISABLE 
+    WHEN (condition)
+trigger_body    
+```
+__예시__
+```sql
+CREATE OR REPLACE TRIGGER customers_copy_bd_trg
+    BEFORE DELETE
+    ON customers_copy
+    --행 트리거로 행 삭제시마다 매번 트리거 발동
+    FOR EACH ROW
+    --비활성화
+    DISABLE
+DECLARE
+    l_order_count   PLS_INTEGER;
+BEGIN
+    --check if the customer has a transaction
+    SELECT COUNT(*) INTO l_order_count
+    FROM orders
+    --DELETE는 :OLD만 사용이 가능하다.
+    WHERE customer_id = :OLD.customer_id;
+    --회원 테이블에서 삭제려하고 할때 주문거래중이면 삭제할수 없다는 트리거 발동
+    --raise an exception if the customer has at least on order
+    IF l_order_count > 0 THEN
+        raise_application_error(-20010,'Cannot delete customer'|| 
+            :OLD.NAME || 'because it already has transactions');
+    END IF;
+END;
+```
+
+## `트리거 활성화`
+__기본 구문__
+```SQL
+ALTER TRIGGER trigger_name ENABLE;
+```
+__예시__
+```SQL
+ALTER TRIGGER customers_copy_bd_trg ENABLE;
+```
+## `테이블의 모든 트리거 활성화`
+__기본 구문__
+```SQL
+ALTER TABLE table_name
+ENABLE ALL TRIGGERS;
+```
+__예시__
+```SQL
+ALTER TABLE customers
+ENABLE ALL TRIGGERS;
+```
+
+__`테이블내의 모든 트리거 활성/비활성화는 테이블명을 입력`__
+
+## `트리거 제거`
+```SQL
+DROP TRIGGER [schema_name.]trigger_name;
+/*
+트리거가 속한 스키마(사용자)의 이름을 지정할수있는데
+건너뛰면 Oracle은 자체 스키마에 있다고 가정합니다. 
+해당 트리거가 존재하지 않을경우 ORA-04080 발생
+
+Oracle은 IF EXISTS : 트리거가 존재할 경우에만 삭제하는 옵션 이 없다.
+*/
+```
+```SQL
+DROP TRIGGER IF EXISTS trigger_name;
+--가 Oracle에는 존재 하지 않는다.
+SQL 명령어가 올바르게 종료되지 않았습니다
+```
+> 프로시저로 트리거가 존재할 경우에만 제거
+```sql
+CREATE OR REPLACE PROCEDURE drop_trigger_if_exists(
+    in_trigger_name VARCHAR2
+)
+AS
+    l_exist PLS_INTEGER;
+BEGIN
+    -- get the trigger count
+    SELECT COUNT(*) INTO l_exist
+    FROM user_triggers
+    WHERE trigger_name = UPPER(in_trigger_name);
+    
+    -- if the trigger exist, drop it
+    IF l_exist > 0 THEN 
+        EXECUTE IMMEDIATE 'DROP TRIGGER ' ||  in_trigger_name;
+    END IF;
+END;
+/
+```
+__예제__
+```SQL
+EXEC drop_trigger_if_exists(customers_copy_bd_trg);
+```
+
+### `Mutating Table Exception`
+```sql
+Mutating Table Exception
+행 레벨 트리거(Row-Level-Trigger)에서 
+
+변하고 있는 값을 참조하거나     발생되는 오류이다.
+                변경하려고 때
+
+INSERT, UPDATE, DELETE 와 같은 DML(데이터 조작어)이 수행되고 
+여기에 연결되어 있는 행레벨 트리거에서 
+변하는 값을 참조하는 경우 발생하는 오류이다.
+ORA-04091: table OT.CUSTOMERS is mutating, 
+            trigger/function may not see it
+```
+## `컴파운드 트리거`
+> 해결방법
+```
+개별 트리거링 타이밍에서 밖에서 선언한 전역 변수에 대해 참조가 가능하므로 
+행 레벨 트리거에서 변하는 값들을 전역 변수
+(주로 배열처럼 쓰이는 테이블 타입의 컬렉션 변수)에 저장한 후 
+명령문 레벨 트리거의 AFTER 타이밍에서 한번에 처리함으로써 
+트리거에서 변하고 있는 값을 참조하는 경우 
+자주 발생하는 ORA-04091 에러를 방지할 수 있다.
+```
+__기본 구문__
+```SQL
+CREATE OR REPLACE TRIGGER 컴파운드_트리거이름
+  FOR {INSERT OR UPDATE OR DELETE} ON 테이블명
+    COMPOUND TRIGGER
+  -- 전역 변수 선언
+  g_global_variable VARCHAR2(10);
+ 
+  BEFORE STATEMENT IS   --명령문 레벨 트리거 BEFORE
+  BEGIN
+    NULL; -- Do something here.
+  END BEFORE STATEMENT;
+ 
+  BEFORE EACH ROW IS  --행레벨 트리거 BEFORE
+  BEGIN
+    NULL; -- Do something here.
+  END BEFORE EACH ROW;
+
+  AFTER EACH ROW IS  --행레벨 트리거 AFTER
+  BEGIN
+    NULL; -- Do something here.
+  END AFTER EACH ROW;
+
+  AFTER STATEMENT IS   --명령문 레벨 트리거 AFTER
+  BEGIN
+    NULL; -- Do something here.
+  END AFTER STATEMENT;
+ 
+END <trigger-name>;
+/
+```
+__예시__
+```SQL
+CREATE OR REPLACE TRIGGER customers_credit_policy_trg
+    FOR UPDATE OR INSERT ON customers_copy
+    COMPOUND TRIGGER
+    --현재 트리거 역할 : 최소 신용한도 * 5 < 입력한 신용한도 일때
+    --                  수정, 추가할 id의 신용한도는 = 최소 신용한도 * 5;
+    --참조(최소 신용한도) < 테이블 수정시 같이 변경됨
+    --매번 입력때마다 신용한도가 변경되기 때문에
+    --명령문 레벨 트리거의 AFTER 타이밍에서 한번에 처리한다.
+
+    --그 수정한 id(PK)와 변경할 CREDIT_LIMIT를 레코드에 저장
+    TYPE r_customers_type IS RECORD(
+        customer_id     customers.customer_id%TYPE,
+        credit_limit    customers.credit_limit%TYPE
+    );
+    --그 레코드를 자료형으로 배열을 만든다.
+    TYPE t_customers_type IS TABLE OF r_customers_type
+        INDEX BY PLS_INTEGER;
+    --변수 t_customer에 객체 참조변수 선언
+    t_customer   t_customers_type;
+    
+    --각 행이 입력,수정될때마다 t_customer 연관 배열에 따로 저장
+    AFTER EACH ROW IS
+    BEGIN--저장할때마다 idx++ 느낌으로 길이에서 +1을해서 누적으로 배열저장
+        t_customer(t_customer.COUNT+1).customer_id  := :NEW.customer_id;
+        t_customer(t_customer.COUNT).credit_limit   := :NEW.credit_limit;
+    END AFTER EACH ROW;
+    
+    --다 끝났다면
+    AFTER STATEMENT IS
+        --조건에 맞는 max_credit을 담을 변수 선언
+        l_max_credit    customers.credit_limit%TYPE;
+    BEGIN
+        --최소값 * 5 를 변수에 담아서 보관
+        SELECT MIN(credit_limit)*5 INTO l_max_credit
+            FROM customers_copy
+        WHERE credit_limit>0;
+        --변경된 id를 찾아서 해당 id의 credit_limit를 변경한다.
+        FOR idx IN 1..t_customer.COUNT
+        LOOP
+            IF  l_max_credit < t_customer(idx).credit_limit THEN
+                UPDATE customers_copy
+                SET credit_limit = l_max_credit
+                --if(변경전 id와 수정)
+                --추가시 이 블럭은 실행이 되지 않는다.
+                WHERE customer_id = t_customer(idx).customer_id;
+            END IF;
+        END LOOP;
+    END AFTER STATEMENT;
+END;
+```
