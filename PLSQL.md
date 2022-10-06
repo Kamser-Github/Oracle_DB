@@ -295,7 +295,7 @@ END;
 절차 : 
     1.MANAGER 변수를 VIP_GRADE 테이블 행 구조로 선언한다.
       MANAGER 변수는 내부에 테이블 행 속성과 자료형이 필드로 들어온다.
-    2.INTO MANAGER를 하면 SELECT 무느이 결과를 MANAGER에 대입을 한다
+    2.INTO MANAGER를 하면 SELECT 문의 결과를 MANAGER에 대입을 한다
       따라서 SELECT에서 가져온 변수개수와 MANAGER가 가져온 변수의 개수가 같아야한다.
 
       즉 MANAGER 옆에 특정 필드를 지정하지 않으면
