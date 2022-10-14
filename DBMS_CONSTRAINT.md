@@ -278,11 +278,11 @@ CREATE TABLE 테이블 명
 (
     ...
     열 자료형
-    CONSTRAINT [제약 조건 이름] FORIEGN KEY(열)
+    CONSTRAINT [제약 조건 이름] FOREIGN KEY(열)
     REFERENCES 참조테이블(참조할 열)
 )
 ```
-> FORIEGN KEY 지정시 유의할것
+> FOREIGN KEY 지정시 유의할것
 ```
 참조할 테이블,참조할 열에 데이터가 없으면 오류가 발생하기때문에
 먼저 참조할 테이블과 참조할 열에 데이터가 들어가 있어야 한다.
