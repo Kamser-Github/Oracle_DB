@@ -217,12 +217,17 @@ CREATE TABLE TEST1
     ID VARCHAR2(20),
     PW VARCHAR2(20) NOT NULL,
     EMAIL VARCHAR2(50),
-    PRIMARY KEY(ID), -- 이름 미 지정
-    CONSTRAINT [제약 조건 이름] UNIQUE(PW) -- 이름 지정
+
+-- 이름 미 지정
+    PRIMARY KEY(ID), 
+
+-- 이름 지정
+    CONSTRAINT [제약 조건 이름] UNIQUE(PW) 
 )
 단 NOT NULL은 테이블 레벨 제약 조건 정의를 할수가 없다.
 ```
 ## 다른 테이블과 관계를 맺는 FOREIGN KEY
+
 > 외래키,외부키로 불리며 서로 다른 테이블 간 관계를 정의한다.
 ```
 특정 테이블에서 PRIMARY KEY 제약조건을 지정한 열을

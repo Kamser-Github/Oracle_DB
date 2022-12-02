@@ -116,7 +116,7 @@ UPDATE TEST2
 ## `데이터 일부만 수정하기`   
 ```
 UPDATE TEST2
-    SET NAME = '또치'
+    SET NAME = '또치',
         AGE  = 34
 WHERE TEST2.NAME = '둘리';
 ```
